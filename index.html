@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paperly — Research Papers, Understood</title>
+  <meta name="description" content="Upload a research paper. Get a clear explanation and a runnable notebook." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="/paperly-icon.svg" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+
+<body>
+  <canvas id="gridCanvas"></canvas>
+
+  <div id="app">
+    <!-- Nav -->
+    <nav class="nav" id="navbar">
+      <a href="#" class="logo">
+        <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+          <rect x="4" y="5" width="17" height="22" rx="2.5" stroke="#fff" stroke-width="2" fill="none" opacity=".25" />
+          <rect x="11" y="3" width="17" height="22" rx="2.5" stroke="#fff" stroke-width="2" fill="#000" />
+          <line x1="15" y1="10" x2="24" y2="10" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity=".5" />
+          <line x1="15" y1="14" x2="22" y2="14" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity=".3" />
+          <line x1="15" y1="18" x2="20" y2="18" stroke="#fff" stroke-width="1.5" stroke-linecap="round" opacity=".15" />
+        </svg>
+        Paperly
+      </a>
+      <div class="nav-r">
+        <a href="#features" class="nav-a">Features</a>
+        <a href="#steps" class="nav-a">How it works</a>
+      </div>
+    </nav>
+
+    <!-- Landing Page Content -->
+    <div id="landingContent">
+      <!-- Hero -->
+      <section class="hero">
+        <h1 class="h1">Research papers,<br /><span class="accent">understood.</span></h1>
+        <p class="sub">Upload a paper. Get a clear summary, a plain-English explanation,<br class="hide-m" /> and a
+          runnable notebook — in minutes.</p>
+
+        <div class="card" id="uploadArea">
+          <div class="tabs">
+            <button class="tab on" id="fileTabBtn">Upload PDF</button>
+            <button class="tab" id="urlTabBtn">Paste link</button>
+          </div>
+          <div id="fileUploadPanel" class="panel">
+            <div class="drop" id="dropzone">
+              <div class="drop-icon">
+                <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                  <path d="M14 20V6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                  <path d="M8 12l6-6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </div>
+              <p class="drop-t">Drop your paper here or <span>browse</span></p>
+              <p class="drop-h">PDF up to 20 MB</p>
+              <input type="file" id="fileInput" accept=".pdf" hidden />
+            </div>
+          </div>
+          <div id="urlUploadPanel" class="panel hidden">
+            <div class="url-row">
+              <input type="url" id="paperUrlInput" class="url-in" placeholder="https://arxiv.org/pdf/2301.xxxxx.pdf" />
+              <button class="btn" id="fetchUrlBtn">Analyze</button>
+            </div>
+          </div>
+          <div class="file-bar hidden" id="filePreview">
+            <div class="file-meta">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor"
+                  stroke-width="2" />
+                <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" />
+              </svg>
+              <span id="fileName"></span>
+              <span class="fsize" id="fileSize"></span>
+            </div>
+            <button class="btn" id="analyzeBtn">Analyze →</button>
+          </div>
+        </div>
+
+        <!-- Resume last session -->
+        <div class="resume-card hidden" id="resumeCard">
+          <div class="resume-info">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" stroke="currentColor"
+                stroke-width="2" />
+              <path d="M14 2v6h6" stroke="currentColor" stroke-width="2" />
+            </svg>
+            <span class="resume-title" id="resumeTitle"></span>
+          </div>
+          <button class="btn resume-btn" id="resumeBtn">Continue →</button>
+        </div>
+
+        <!-- Pipeline -->
+        <div class="pipe hidden" id="pipelineSection">
+          <div class="pipe-row">
+            <div class="dot-step" id="stepParse">
+              <div class="ds"></div>Parse
+            </div>
+            <div class="pipe-line"></div>
+            <div class="dot-step" id="stepExtract">
+              <div class="ds"></div>Extract
+            </div>
+            <div class="pipe-line"></div>
+            <div class="dot-step" id="stepExplain">
+              <div class="ds"></div>Explain
+            </div>
+            <div class="pipe-line"></div>
+            <div class="dot-step" id="stepNotebook">
+              <div class="ds"></div>Notebook
+            </div>
+          </div>
+          <p class="pipe-msg" id="pipelineStatusText">Parsing…</p>
+        </div>
+
+        <!-- Summary & Explanation results (non-dashboard) -->
+        <div class="results hidden" id="resultsSection">
+          <div class="res-tabs">
+            <button class="rtab on" data-result="summary">Summary</button>
+            <button class="rtab" data-result="explanation">Explanation</button>
+            <button class="rtab" data-result="notebook" id="notebookTabBtn">Notebook</button>
+            <button class="rtab new-paper-btn" id="newPaperBtn">+ New Paper</button>
+          </div>
+          <div class="rpanel" id="summaryPanel">
+            <div class="result-content" id="summaryContent"></div>
+          </div>
+          <div class="rpanel hidden" id="explanationPanel">
+            <div class="result-content" id="explanationContent"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section class="feat-section" id="features">
+        <h2 class="h2">What you get</h2>
+        <div class="fgrid">
+          <div class="f"><span class="fn">01</span>
+            <h3>Section detection</h3>
+            <p>Automatically maps abstract, methodology, experiments, and results.</p>
+          </div>
+          <div class="f"><span class="fn">02</span>
+            <h3>Idea separation</h3>
+            <p>Theory vs. experiments, assumptions, algorithms — all catalogued.</p>
+          </div>
+          <div class="f"><span class="fn">03</span>
+            <h3>Simple explanations</h3>
+            <p>Every equation and method explained with intuition and analogies.</p>
+          </div>
+          <div class="f"><span class="fn">04</span>
+            <h3>Runnable notebook</h3>
+            <p>Clean Python code in a Colab notebook. Runs top-to-bottom, no setup.</p>
+          </div>
+          <div class="f"><span class="fn">05</span>
+            <h3>Experiment reproduction</h3>
+            <p>Key results replicated with plots. Conceptual papers get simulations.</p>
+          </div>
+          <div class="f"><span class="fn">06</span>
+            <h3>Interactive exploration</h3>
+            <p>Change parameters, rerun, ask "what if" — learn by doing.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Steps -->
+      <section class="steps-section" id="steps">
+        <h2 class="h2">How it works</h2>
+        <div class="slist">
+          <div class="s"><span class="sn">1</span>
+            <div>
+              <h3>Upload</h3>
+              <p>Drop a PDF or paste a link.</p>
+            </div>
+          </div>
+          <div class="s"><span class="sn">2</span>
+            <div>
+              <h3>Extract</h3>
+              <p>Problem, methods, and assumptions identified.</p>
+            </div>
+          </div>
+          <div class="s"><span class="sn">3</span>
+            <div>
+              <h3>Explain</h3>
+              <p>Plain-English walkthrough of every concept.</p>
+            </div>
+          </div>
+          <div class="s"><span class="sn">4</span>
+            <div>
+              <h3>Generate</h3>
+              <p>A complete Colab notebook, ready to run.</p>
+            </div>
+          </div>
+          <div class="s"><span class="sn">5</span>
+            <div>
+              <h3>Reproduce</h3>
+              <p>Key experiments replicated with plots.</p>
+            </div>
+          </div>
+          <div class="s"><span class="sn">6</span>
+            <div>
+              <h3>Explore</h3>
+              <p>Tweak, rerun, and truly understand the paper.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <span>Paperly</span>
+        <span class="foot-r">From paper to understanding.</span>
+      </footer>
+    </div>
+
+    <!-- ═══════════ NOTEBOOK DASHBOARD (full page) ═══════════ -->
+    <div id="dashboardView" class="dashboard hidden">
+
+      <!-- Dashboard: Task List -->
+      <div id="taskListView" class="dash-content">
+        <div class="dash-header">
+          <div class="dash-header-l">
+            <h1 class="dash-title" id="dashTitle">Paper Title</h1>
+            <div class="dash-meta" id="dashMeta"></div>
+            <p class="dash-desc" id="dashDesc"></p>
+          </div>
+          <div class="dash-header-r">
+            <button class="dbtn-outline new-paper-btn" id="dashNewPaperBtn">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+              </svg>
+              New Paper
+            </button>
+            <button class="dbtn-outline" id="dashBackBtn">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M10 2L4 8l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+              Back
+            </button>
+            <button class="dbtn-outline" id="dashDlBtn">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <path d="M8 2v10M4 8l4 4 4-4M2 14h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+              .ipynb
+            </button>
+          </div>
+        </div>
+
+        <div class="track-header">
+          <h2 class="track-title">Implementation Track</h2>
+          <span class="track-badge" id="trackBadge">0 Tasks</span>
+        </div>
+
+        <div class="task-list" id="taskList"></div>
+      </div>
+
+      <!-- Dashboard: Task Detail (split view) -->
+      <div id="taskDetailView" class="dash-content hidden">
+        <div class="detail-topbar">
+          <button class="detail-back" id="detailBackBtn">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+              <path d="M10 2L4 8l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </button>
+          <span class="detail-name" id="detailName">Task</span>
+          <div class="detail-actions">
+            <button class="dbtn-run" id="detailRunBtn">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                <path d="M4 2l10 6-10 6V2z" fill="currentColor" />
+              </svg>
+              Run
+            </button>
+          </div>
+        </div>
+
+        <div class="detail-split">
+          <!-- Left: Description (always visible) -->
+          <div class="detail-left">
+            <div class="detail-desc" id="detailDesc"></div>
+          </div>
+          <!-- Right: Code Editor (top) + Output (bottom) -->
+          <div class="detail-right">
+            <div class="editor-header">
+              <span class="editor-lang">Python</span>
+              <span class="py-status" id="pyStatus"></span>
+            </div>
+            <textarea class="editor-code" id="detailCodeEditor" spellcheck="false"></textarea>
+            <div class="output-area" id="detailOutputArea">
+              <span class="out-empty">Run the code to see output here</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
