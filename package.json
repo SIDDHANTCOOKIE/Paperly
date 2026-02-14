@@ -11,12 +11,12 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "devDependencies": {},
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.2.1",
     "multer": "^2.0.2",
     "vite": "^7.3.1"
   }

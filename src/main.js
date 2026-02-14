@@ -172,8 +172,15 @@ async function api(endpoint, paperText, maxRetries = 2) {
         body: JSON.stringify({ paperText }),
       });
       if (res.status === 429) {
-        wasRateLimited = true;
         const data = await res.json().catch(() => ({}));
+
+        // Check if strict rate limit (has specific error message)
+        if (data.error && data.error.includes('analyze 3 papers')) {
+          alert(data.error);
+          throw new Error(data.error);
+        }
+
+        wasRateLimited = true;
         const wait = Math.min(data.retryAfter || 15, 30);
         await countdown(`All providers busy — retrying in`, wait);
         continue;
