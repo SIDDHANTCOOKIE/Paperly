@@ -19,7 +19,7 @@ const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 
 // API base URL — empty in dev (Vite proxy), set to backend URL in production
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
 document.addEventListener('DOMContentLoaded', () => {
   initGrid();
