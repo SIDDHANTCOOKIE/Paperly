@@ -69,7 +69,7 @@ function makeProvider(baseUrl, apiKey, model, label) {
 
 // 1. Groq — supports multiple comma-separated keys for rotation
 const groqKeys = (process.env.GROQ_API_KEY || '')
-    .split(',')
+    .split(/[\s*,]+/)
     .map((k) => k.trim())
     .filter(Boolean);
 
