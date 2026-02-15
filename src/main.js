@@ -20,6 +20,7 @@ const $$ = (s) => document.querySelectorAll(s);
 
 // API base URL — empty in dev (Vite proxy), set to backend URL in production
 const API_BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+console.log('🔌 API Base:', API_BASE || '(local proxy)');
 
 document.addEventListener('DOMContentLoaded', () => {
   initGrid();
@@ -168,6 +169,8 @@ async function api(endpoint, paperText, maxRetries = 2) {
     try {
       const res = await fetch(`${API_BASE}/api/${endpoint}`, {
         method: 'POST',
+        mode: 'cors', // Explicitly request CORS
+        credentials: 'omit', // Ensure no cookies are sent (backend rejects them with *)
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ paperText }),
       });
@@ -240,6 +243,22 @@ async function run() {
     msg('');
     const msgEl = $('#pipelineStatusText');
     if (msgEl) {
+      if (err.message?.includes('Failed to fetch')) {
+        msgEl.innerHTML = `
+          <div style="text-align:center;padding:12px 0">
+            <div style="font-size:1.1rem;color:#fca5a5;margin-bottom:8px">⚠️ Connection Failed</div>
+            <div style="color:var(--t2);font-size:.85rem;max-width:360px;margin:0 auto;line-height:1.6">
+              Could not reach the backend server.
+              <br><br>
+              <strong>Fix on Vercel:</strong><br>
+              Ensure <code>VITE_API_URL</code> is set to your Render URL (https://...).
+              <br>Then <strong>redeploy</strong>.
+            </div>
+            <a href="#" onclick="location.reload()" style="display:inline-block;margin-top:12px;padding:8px 20px;background:rgba(255,255,255,0.1);color:#fff;border-radius:6px;font-size:.82rem;text-decoration:none">Reload</a>
+          </div>`;
+        return;
+      }
+
       if (err.rateLimited) {
         msgEl.innerHTML = `
           <div style="text-align:center;padding:12px 0">

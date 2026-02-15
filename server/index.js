@@ -19,6 +19,14 @@ const PORT = process.env.PORT || 3001;
 // Trust the first proxy (Render load balancer) so req.ip is correct
 app.set('trust proxy', 1);
 
+// CORS must be first!
+app.use(cors({
+    origin: '*', // Allow any frontend (Vercel, localhost, etc.)
+    credentials: false, // No cookies used, so this is safe/easier
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 // Rate limiting: 3 papers per hour per IP
 const limiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
@@ -31,12 +39,6 @@ const limiter = rateLimit({
 // Apply rate limiting to API routes
 app.use('/api/', limiter);
 
-app.use(cors({
-    origin: true, // reflect request origin
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
 app.use(express.json({ limit: '50mb' }));
 
 // Serve frontend in production
