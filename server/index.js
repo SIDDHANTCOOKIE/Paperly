@@ -94,12 +94,17 @@ function parseAmount(value) {
 const limiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
     limit: (req) => (isPremiumRequest(req) ? PREMIUM_LIMIT_PER_HOUR : FREE_LIMIT_PER_HOUR),
+    keyGenerator: (req) => {
+        const ip = req.ip || req.socket.remoteAddress || 'unknown';
+        const tier = isPremiumRequest(req) ? 'premium' : 'free';
+        return `${tier}:${ip}`;
+    },
     standardHeaders: 'draft-8',
     legacyHeaders: false,
     message: (req) => ({
         error: isPremiumRequest(req)
             ? `Premium rate limit exceeded. You can analyze ${PREMIUM_LIMIT_PER_HOUR} papers per hour.`
-            : `Free rate limit exceeded. You can analyze ${FREE_LIMIT_PER_HOUR} papers per hour. Sponsor from $${SPONSOR_MIN_USD} to unlock Premium.`,
+            : `Free rate limit exceeded. You can analyze ${FREE_LIMIT_PER_HOUR} papers per hour.`,
     }),
 });
 
