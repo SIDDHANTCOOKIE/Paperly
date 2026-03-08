@@ -2,9 +2,10 @@
 
 [![Live Demo](https://img.shields.io/badge/demo-online-green.svg)](https://your-app-url.onrender.com)
 
-Paperly is an AI-powered tool that transforms complex research papers into clear, plain-English explanations and runnable code.
+Paperly is an AI-powered tool that transforms complex research papers into clear, plain-English explanations and jupyter notebooks.
 
-![Paperly App](https://via.placeholder.com/1200x600.png?text=Paperly+Dashboard+Preview)
+<img width="1873" height="895" alt="image" src="https://github.com/user-attachments/assets/aed70dec-3359-4684-8c3e-2e73b6c34df3" />
+
 
 ## Features
 
