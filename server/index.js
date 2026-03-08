@@ -108,8 +108,10 @@ const limiter = rateLimit({
     }),
 });
 
-// Apply rate limiting to API routes
-app.use('/api/', limiter);
+// Apply rate limiting only to analysis endpoints (not health, premium status, payments)
+app.use('/api/summarize', limiter);
+app.use('/api/explain', limiter);
+app.use('/api/notebook', limiter);
 
 app.use(express.json({ limit: '50mb' }));
 
