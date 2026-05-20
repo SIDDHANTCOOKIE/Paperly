@@ -193,8 +193,32 @@ if (process.env.SAMBANOVA_API_KEY) {
     ));
 }
 
+// 4. Google Gemini — Free tier offers great limits (15 RPM, 1M TPM, 1500 RPD)
+if (process.env.GEMINI_API_KEY) {
+    providers.push(makeProvider(
+        'https://generativelanguage.googleapis.com/v1beta/openai',
+        process.env.GEMINI_API_KEY, 'gemini-2.0-flash', 'Gemini 2.0 Flash'
+    ));
+}
+
+// 5. OpenRouter — Fallback free & large models
+if (process.env.OPENROUTER_API_KEY) {
+    providers.push(makeProvider(
+        'https://openrouter.ai/api/v1',
+        process.env.OPENROUTER_API_KEY, 'deepseek/deepseek-v4-flash:free', 'OpenRouter DeepSeek v4 Flash'
+    ));
+    providers.push(makeProvider(
+        'https://openrouter.ai/api/v1',
+        process.env.OPENROUTER_API_KEY, 'cognitivecomputations/dolphin-mistral-24b-venice-edition:free', 'OpenRouter Dolphin Mistral 24B'
+    ));
+    providers.push(makeProvider(
+        'https://openrouter.ai/api/v1',
+        process.env.OPENROUTER_API_KEY, 'meta-llama/llama-3.3-70b-instruct', 'OpenRouter Llama 3.3 70B'
+    ));
+}
+
 if (providers.length === 0) {
-    console.error('❌ No API keys found in .env — need at least GROQ_API_KEY');
+    console.error('❌ No API keys found in .env — need at least GROQ_API_KEY or GEMINI_API_KEY');
     process.exit(1);
 }
 

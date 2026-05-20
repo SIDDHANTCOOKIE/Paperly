@@ -10,7 +10,7 @@ Paperly is an AI-powered tool that transforms complex research papers into clear
 
 - **Summary & Explanation**: Breaks down papers into key concepts, assumptions, and results.
 - **Runnable Notebooks**: Automatically generates a Python notebook (Colab compatible) to reproduce experiments or explore concepts.
-- **Multi-Provider AI**: Uses a robust chain of AI providers (Groq Llama 3/3.1, Cerebras, SambaNova) for fast, free, and reliable inference.
+- **Multi-Provider AI**: Uses a robust chain of AI providers (Groq Llama 3/3.1, Cerebras, SambaNova, Google Gemini, OpenRouter) for fast, free, and reliable inference.
 - **Session Persistence**: Saves your analysis locally so you can resume later.
 - **Interactive Dashboard**: Track implementation tasks and download code.
 
@@ -18,7 +18,7 @@ Paperly is an AI-powered tool that transforms complex research papers into clear
 
 - **Frontend**: Vite + Vanilla JS (no framework overhead)
 - **Backend**: Node.js + Express
-- **AI Inference**: Groq, Cerebras, SambaNova (via OpenAI-compatible APIs)
+- **AI Inference**: Groq, Cerebras, SambaNova, Google Gemini, OpenRouter (via OpenAI-compatible APIs)
 - **Styling**: Custom CSS variables for a clean, dark-mode aesthetic
 
 ## Getting Started
@@ -42,6 +42,8 @@ Paperly is an AI-powered tool that transforms complex research papers into clear
    # Optional backups:
    CEREBRAS_API_KEY=csk-...
    SAMBANOVA_API_KEY=...
+   GEMINI_API_KEY=AIza...
+   OPENROUTER_API_KEY=sk-or-v1-...
 
    # Sponsor premium payments (Razorpay)
    RAZORPAY_KEY_ID=rzp_test_...
